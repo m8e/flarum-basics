@@ -1,0 +1,341 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Flarum Basics</title>
+  <link rel="stylesheet" href="./steps-flarum_basics/assets/spectre.css"></link>
+  <link rel="stylesheet" href="./steps-flarum_basics/assets/toc.css"></link>
+  <link rel="stylesheet" href="./steps-flarum_basics/assets/common.css"></link>
+  <script src="./steps-flarum_basics/assets/toc.js"></script>
+  <style>
+    .bg {
+      background-color: #eff0f3;
+    }
+    .headline {
+      color: #0d0d0d;
+    }
+    .topSection {
+      padding: 50px .5rem;
+    }
+    .card {
+      border: 0;
+      box-shadow: 0 0.25rem 1rem rgba(48,55,66,.15);
+      height: 100%;
+      margin-bottom: 3.5rem;
+    }
+    .card-header, .card-body {
+      padding-left: 2rem !important;
+    }
+    .card-image {
+      text-align: left;
+      padding: 1rem;
+    }
+    .card-image img{
+      box-shadow: 0 40px 50px rgba(7,30,87,.2); 
+      /* max-width: 750px; */
+      margin: auto;
+      margin-bottom: 2rem;
+      display: unset !important;
+    }
+    .toc, .tocFake {
+      z-index: 10;
+      position: fixed;
+      top: 60px;
+      left: 15px;
+      max-width: 250px;
+      padding: 10px;
+      box-shadow: 0 0.25rem 1rem rgba(48,55,66,.15);
+      background-color: white;
+    }
+    .tocFake {
+      cursor: pointer;
+      top: 20px;
+    }
+    @media (max-width:1350px){
+      .toc {
+        max-width: 200px;
+      }
+    }
+
+    .headline:focus, .headline:hover {
+      outline : none !important;
+    }
+    .toc-link::before{
+      width:5px;
+    }
+    .is-active-link::before{
+      background-color: rgba(255,196,35,1);
+    }
+    .toc-link {
+      font-size: 0.8em;
+    }
+    .doubleCheesburger {
+      width: 12px;
+      height: 12px;
+      background-size: contain;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAAAw0lEQVR4nO3YMQ7CMAxG4Qc74gJlRL07qjgBV+rQXCAMHUBRhiAKSdv3SV482R48/CBJkiRJLxdgAAIQV14BuAP9J8uPDQy+dI1AV3KAoYFhf1W3dNlD5gABOJVcaoUCcH5vHCsNUktMG7kDPP4wSC1Fu/Vs9wleSy/VMT+MqYHBv62J+bEXLy9JkvbNPKCBwZcu8wDMA8wDYtowD8gwD8A8QJIk7Zh5QAODL13mAZgHmAfEtGEekGEegHmAJEmSpI17AhoPKkbYwzDbAAAAAElFTkSuQmCC);
+    }
+    .form-checkbox {
+      display: inline;
+    }
+    input[type="checkbox"], .form-icon {
+      transform:scale(2, 2);
+    }
+    .stepTitle {
+      display:inline-block;
+      margin-left: 10px;
+    }
+    .card {
+      border: 2px solid transparent;
+    }
+    .completedCard {
+      border: 2px solid #2a9a39;
+      box-shadow: 0 0.25rem 1rem rgb(43 154 56 / 0.45);
+    }
+
+    .form-checkbox input:checked+.form-icon,
+    .form-radio input:checked+.form-icon,
+    .form-switch input:checked+.form-icon {
+      background: #00c400;
+      border-color: #00c400
+    }
+
+    .form-checkbox input:focus+.form-icon,
+    .form-radio input:focus+.form-icon,
+    .form-switch input:focus+.form-icon {
+      border-color: #00c400;
+      box-shadow: 0 0.25rem 1rem rgb(43 154 56 / 0.2);
+    }
+
+    .form-checkbox input:indeterminate+.form-icon {
+      background: #00c400;
+      border-color: #00c400
+    }
+
+    
+  </style>
+
+  <script>
+    var exportSettings = {"format":"jpeg","quality":"90","imageSize":100,"imageAlign":"left","oneStepPerPage":false,"includeTOS":true,"includeCoverPage":true,"includeNumbers":true,"embeddableExport":false,"textPosition":"top","includeCheckboxes":true,"tocHeadline":"Table of contents","includeFooter":true,"includeHeader":true,"headerText":"[[Guide_Title]]","headerLogo":null,"headerLogoAlign":"right","footerNumbering":"Page [[Page_Number]]","footerLogo":null,"footerText":"[[Guide_Title]]","customCSS":"","pageOrientation":"portrait","footerLogoAlign":"left","pdfStepMode":"mode2","preparsed":{"headers":["Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics"],"footers":["Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics","Flarum Basics"],"numberings":["Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]","Page [[Page_Number]]"]}};
+
+    window.onload = function() {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.toc',
+        positionFixedSelector: '.toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.section',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: '.headline',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+        headingsOffset: 5,
+        headingLabelCallback: function(heading, node) {
+          var ancestor = findAncestor(node, 'card');
+          var isCompleted = ancestor && (findAncestor(node, 'card').classList.contains('completedCard'));
+          return (isCompleted ? '✅ ' : '') + heading.trim();
+        }
+      });
+      var tocFake = document.getElementsByClassName('tocFake')[0]
+      var tocReal = document.getElementsByClassName('toc')[0];
+      tocFake.addEventListener('click', function() {
+        toggleClassName(tocFake, 'show-md');
+        toggleClassName(tocReal, 'hide-md');
+      })
+      
+
+      var nodes = document.getElementsByClassName('completionCheckbox')
+      var checkboxes = Array.prototype.slice.call(nodes);
+      checkboxes.forEach(checkboxListener)
+    }
+    function toggleClassName(element, className) {
+      element.classList.toggle(className);
+    }
+    function checkboxListener(checkbox) {
+      checkbox.addEventListener('change', function(event) {
+        var stepId = event.target.getAttribute('data-step-id');
+        var isChecked = event.target.checked
+        var cardNode = document.querySelector('.card[data-step-id="'+stepId+'"]');
+        cardNode.classList.toggle('completedCard');
+        tocbot.refresh();
+      })
+    }
+    function findAncestor (el, cls) {
+        while ((el = el && el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
+  </script>
+
+</head>
+
+<body class="bg">
+  <div class="tocFake show-md">
+    <div class="icon doubleCheesburger"></div>
+  </div>
+  <div class="toc hide-md"></div>
+  <div class="topSection">
+    <div class="container grid-lg text-center guideDetailsWrapper">
+      <h2 class="headline title">Flarum Basics</h2>
+    </div>
+  </div>
+  <div class="section">
+      <div class="container grid-md">
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-1">
+
+              <div class="card-header card-title h5 headline" id="step-1">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-1">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>1 </b>
+                Start a Discussion
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>After logging into Flarum, select the Start a Discussion button.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/AoianI.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-2">
+
+              <div class="card-header card-title h5 headline" id="step-2">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-2">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>2 </b>
+                Choose Tags
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Select choose tags.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_1.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-3">
+
+              <div class="card-header card-title h5 headline" id="step-3">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-3">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>3 </b>
+                Pick Tags
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Pick the tags that relate to the post you are about to create.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_2.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-4">
+
+              <div class="card-header card-title h5 headline" id="step-4">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-4">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>4 </b>
+                Title the Discussion
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Give your discussion a title.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_3.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-5">
+
+              <div class="card-header card-title h5 headline" id="step-5">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-5">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>5 </b>
+                Format
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>While crafting your discussion you may add formatting. Select an option from the toolbar. Here bold text will be added.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_4.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-6">
+
+              <div class="card-header card-title h5 headline" id="step-6">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-6">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>6 </b>
+                Markdown
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Notice that as you add formatting the text or link will be surrounded by certain characters. Leave these in place. This is called markdown. After submitting your post you will see the formatted text/link. To insert a link you will see "https://" in parentheses. Put the URL there. To the left in between brackets put the text that people will click on.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_5.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-7">
+
+              <div class="card-header card-title h5 headline" id="step-7">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-7">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>7 </b>
+                Submit Discussion
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Click Post Discussion to submit.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_6.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="columns flex-centered">
+          <div class="column col-xs-10 col-md-10 col-xl-10">
+            <div class="card stepCard" data-step-id="step-8">
+
+              <div class="card-header card-title h5 headline" id="step-8">
+                <label class="form-checkbox">
+                  <input type="checkbox" class="completionCheckbox" data-step-id="step-8">
+                  <i class="form-icon"></i>
+                </label>
+                <div class="stepTitle">
+                  <b>8 </b>
+                Interactions
+                </div>
+              </div>
+              <div class="card-body stepDescription"><p>Here is your post with formatting. Now others may interact with your post by taking actions such as replying or liking.</p></div>
+                <div class="card-image"><img src="./steps-flarum_basics/step_7.jpeg" class="img-responsive stepImage"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</body>
+</html>
